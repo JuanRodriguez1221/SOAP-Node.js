@@ -1,56 +1,19 @@
-// // client.js
-// const soap = require('soap');
-
-// const url = 'http://localhost:3000/hello?wsdl';
-
-// // Cambia el valor del nombre del cliente aquí
-// const cliente = {
-//   name: 'Juan'
-// };
-
-// console.log('Enviando solicitud al servidor...');
-// soap.createClient(url, (err, client) => {
-//   if (err) {
-//     console.error('Error al crear el cliente SOAP:', err);
-//     return;
-//   }
-
-//   console.log('Cliente SOAP creado con éxito.');
-//   console.log('Enviando solicitud al servicio...');
-//   client.sayHello(cliente, (err, result) => {
-//     if (err) {
-//       console.error('Error al enviar la solicitud al servicio:', err);
-//       return;
-//     }
-
-//     console.log('Respuesta del servicio:', result);
-//   });
-// });
-
-
-// client.js
+const express = require('express');
 const soap = require('soap');
 
-const url = 'http://localhost:3000/hello?wsdl';
+const wsdlUrl = 'http://localhost:3031/bmiCalculator?wsdl';
+const clientArgs = { nombre: "Juan", peso: 70, altura: 1.75 };
 
-// Cambia el valor del nombre del cliente aquí
-const cliente = {
-  name: 'Maria Fernanda'
-};
-
-soap.createClient(url, (err, client) => {
+soap.createClient(wsdlUrl, function(err, client) {
   if (err) {
-    console.error('Error al crear el cliente SOAP:', err);
-    return;
+    console.error("Error al crear cliente SOAP:", err);
+  } else {
+    client.calcularIMC(clientArgs, function(err, response) {
+      if (err) {
+        console.error("Error al llamar al servicio:", err);
+      } else {
+        console.log("Respuesta del servicio:", response);
+      }
+    });
   }
-
-  client.sayHello(cliente, (err, result) => {
-    if (err) {
-      console.error('Error al enviar solicitud al servicio:', err);
-      return;
-    }
-
-    console.log('Respuesta del servicio:', result.name);
-  });
 });
-

@@ -1,36 +1,27 @@
 const soap = require('soap');
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Define un servicio SOAP simple
-const service = {
-  HelloService: {
-    Hello_Port: {
-      sayHello: function(args) {
-        console.log('Recibida solicitud: ', args);
-        const respuesta = 'Hola ' + args.name;
-        console.log('Enviando respuesta: ', respuesta);
-        return { respuesta: respuesta };
+const servicio = {
+  CalculadoraIMC_Service: {
+    CalculadoraIMC_Port: {
+      calcularIMC(args) {
+        const { nombre, peso, altura } = args;
+        const imc = peso / (altura * altura);
+        return { mensaje: "¡Hola, " + nombre + "! Tu IMC es " + imc.toFixed(2) };
       }
     }
   }
-};  
+};
 
-// Crea un servidor SOAP
-const xml = require('fs').readFileSync('./hello-service.wsdl', 'utf8');
-const server = soap.listen(app, '/hello', service, xml);
+const wsdlXML = require('fs').readFileSync('./hello-service.wsdl', 'utf8');
 
-// Agregar manejador de eventos para el servidor SOAP
-server.on('request', function(request, methodName) {
-  console.log(`Solicitud recibida para el método ${methodName}: `, request);
+const server = app.listen(3031, function () {
+  const host = '127.0.0.1';
+  const port = server.address().port;
+  console.log("Servidor iniciado en http://" + host + ":" + port);
 });
 
-app.get('/', (req, res) => {
-    res.send('¡Hola! Este es el servidor de chat.');
-  });
-  
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor SOAP corriendo en el puerto ${PORT}`);
+soap.listen(server, '/bmiCalculator', servicio, wsdlXML, () => {
+  console.log("Servicio de cálculo de IMC iniciado.");
 });

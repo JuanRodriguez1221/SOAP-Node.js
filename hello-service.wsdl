@@ -1,48 +1,43 @@
-<!-- hello-service.wsdl -->
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
-            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            targetNamespace="http://example.com/hello-service"
-            name="HelloService">
+<definitions name="BMI_Calculator_Service" targetNamespace="http://www.example.com/wsdl/BMICalculatorService.wsdl" 
+  xmlns="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+  xmlns:tns="http://www.example.com/wsdl/BMICalculatorService.wsdl" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <types>
-        <xsd:schema targetNamespace="http://example.com/hello-service">
-            <xsd:element name="name" type="xsd:string"/>
-            <xsd:element name="greeting" type="xsd:string"/>
-        </xsd:schema>
-    </types>
+  <message name="calcularIMCRequest">
+    <part name="nombre" type="xsd:string"/>
+    <part name="peso" type="xsd:float"/>
+    <part name="altura" type="xsd:float"/>
+  </message>
 
-    <message name="sayHelloRequest">
-        <part name="name" type="xsd:string"/>
-    </message>
-    <message name="sayHelloResponse">
-        <part name="greeting" type="xsd:string"/>
-    </message>
+  <message name="calcularIMCResponse">
+    <part name="mensaje" type="xsd:string"/>
+  </message>
 
-    <portType name="Hello_PortType">
-        <operation name="sayHello">
-            <input message="tns:sayHelloRequest"/>
-            <output message="tns:sayHelloResponse"/>
-        </operation>
-    </portType>
+  <portType name="CalculadoraIMC_PortType">
+    <operation name="calcularIMC">
+      <input message="tns:calcularIMCRequest"/>
+      <output message="tns:calcularIMCResponse"/>
+    </operation>
+  </portType>
 
-    <binding name="Hello_Binding" type="tns:Hello_PortType">
-        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-        <operation name="sayHello">
-            <soap:operation soapAction="sayHello"/>
-            <input>
-                <soap:body use="literal"/>
-            </input>
-            <output>
-                <soap:body use="literal"/>
-            </output>
-        </operation>
-    </binding>
+  <binding name="CalculadoraIMC_Binding" type="tns:CalculadoraIMC_PortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="calcularIMC">
+      <soap:operation soapAction="calcularIMC"/>
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:example:bmicalculatorservice" use="encoded"/>
+      </input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:example:bmicalculatorservice" use="encoded"/>
+      </output>
+    </operation>
+  </binding>
 
-    <service name="Hello_Service">
-        <port name="Hello_Port" binding="tns:Hello_Binding">
-            <soap:address location="http://localhost:3000/hello"/>
-        </port>
-    </service>
-
+  <service name="CalculadoraIMC_Service">
+    <documentation>WSDL File for BMICalculatorService</documentation>
+    <port binding="tns:CalculadoraIMC_Binding" name="CalculadoraIMC_Port">
+      <soap:address location="http://localhost:3031/bmiCalculator/" />
+    </port>
+  </service>
 </definitions>
